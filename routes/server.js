@@ -100,8 +100,9 @@ router.get("/api/getCurrentSummoner", function (req, res, next) {
   res.send(currentSummonerInfo);
 });
 
-//根据召唤师id查询比赛
+//根据summonerID查询战绩
 router.get("/api/getMatchHistoryByAccountId", function (req, res, next) {
+  console.log(req.query);
   res.send(MatchHistory);
 });
 
