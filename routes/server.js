@@ -3,10 +3,10 @@ const router = express.Router();
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 const { exec } = require("child_process");
 const https = require("https");
-const { log } = require("console");
 
 let allData = null;
 let currentSummonerInfo = null; //本地召唤师信息
+let querySummonerInfo = null;
 let MatchHistory = null; //比赛记录
 let currentSummonerRankInfo = null; //本地召唤师排位分数
 let currentSummonerChampionMastery = null; //本地召唤师英雄熟练度
@@ -71,11 +71,10 @@ const main = async () => {
       "/lol-summoner/v1/current-summoner"
     );
 
-    const { puuid, accountId, summonerId } = currentSummonerInfo;
-
-    //根据accountID查询战绩
+    //根据summonerID查询战绩
     MatchHistory = await getRiotData(
-      `/lol-match-history/v1/products/lol/${summonerId}/matches?begIndex=0&endIndex=1`
+      `/lol-match-history/v1/products/lol/${summonerId}/matches`,
+      [begIndex, endIndex]
     );
 
     //查询本地召唤师排位分数
