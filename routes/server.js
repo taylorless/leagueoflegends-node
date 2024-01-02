@@ -108,6 +108,7 @@ router.get("/api/getMatchHistoryByAccountId", function (req, res, next) {
 
 //查询本地召唤师排位分数
 router.get("/api/getCurrentSummonerRankInfo", function (req, res, next) {
+  console.log(req.query);
   res.send(currentSummonerRankInfo);
 });
 
