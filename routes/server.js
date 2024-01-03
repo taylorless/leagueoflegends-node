@@ -42,8 +42,8 @@ const getRiotData = async (url, method = "GET", params) => {
     path: url,
     method: method,
     headers: headers,
+    params: params,
   };
-  // console.log(options);
   return new Promise((resolve, reject) => {
     const req = https.request(options, (res) => {
       let data = "";
@@ -59,22 +59,26 @@ const getRiotData = async (url, method = "GET", params) => {
     });
     req.end();
   });
+};
 
-  // return new Promise((resolve, reject) => {
-  //   const instance = axios.create({
-  //     url: `http://127.0.0.1:${port}${url}`,
-  //     method: method,
-  //     headers: headers,
-  //     params: params,
-  //   });
-  //   instance()
-  //     .then((res) => {
-  //       resolve(res);
-  //     })
-  //     .catch((error) => {
-  //       reject(error);
-  //     });
-  // });
+const getRiotData1 = async () => {
+  if (allData == null) return false;
+
+  //通过正则匹配拿到token和port
+  const token = allData.match(/remoting-auth-token=(.*?)["'\s]/)[1];
+  const port = allData.match(/--app-port=(.*?)["'\s]/)[1];
+  const auth = Buffer.from(`riot:${token}`).toString("base64");
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    Authorization: `Basic ${auth}`,
+  };
+  const service = axios.create({
+    baseURL: `127.0.0.1:${port}`,
+    timeout: 10000,
+    headers: headers,
+  });
+  return service;
 };
 
 const main = async () => {
@@ -92,10 +96,13 @@ main();
 
 // 查询本地召唤师信息
 router.get("/getCurrentSummoner", async (req, res, next) => {
-  const currentSummonerInfo = await getRiotData(
-    "/lol-summoner/v1/current-summoner"
-  );
-
+  // const currentSummonerInfo = await getRiotData(
+  //   "/lol-summoner/v1/current-summoner"
+  // );
+  const currentSummonerInfo = await getRiotData1({
+    url: "/lol-summoner/v1/current-summoner",
+    method: "get",
+  });
   res.send(currentSummonerInfo);
 });
 
@@ -125,7 +132,7 @@ router.get("/getCurrentSummonerChampionMastery", function (req, res, next) {
   res.send(currentSummonerChampionMastery);
 });
 
-//测试
+//根据ppuid查询近期战绩（20局）
 router.get("/getDataByPuuid", async (req, res, next) => {
   const puuid = req.query.puuid;
   const data = await getRiotData(
@@ -136,8 +143,9 @@ router.get("/getDataByPuuid", async (req, res, next) => {
 
 //根据name查询召唤师信息
 router.get("/getSummonerInfoByName", async (req, res, next) => {
-  const name = req.body.name;
-  const data = await getRiotData("/lol-summoner/v1/summoners", "航航航牛皮");
+  const name = req.query.name;
+  const a = JSON.stringify({ name: name });
+  const data = await getRiotData("/lol-summoner/v1/summoners", "GET", a);
   res.send(data);
 });
 
