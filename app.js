@@ -8,7 +8,6 @@ var cors = require("cors");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const testRouter = require("./routes/test");
-const requestRouter = require("./routes/request");
 const serverRouter = require("./routes/server");
 
 var app = express();
@@ -28,7 +27,6 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(indexRouter);
 app.use(usersRouter);
 app.use(testRouter);
-app.use(requestRouter);
 app.use(serverRouter);
 
 // 解决post请求获取请求体的问题

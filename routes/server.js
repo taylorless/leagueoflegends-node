@@ -61,11 +61,6 @@ const main = async () => {
   try {
     const leagueClientCommandline = await findLeagueClientCommandLine();
     // console.log("LeagueClientUx.exe 命令行参数:", leagueClientCommandline);
-
-    //查询本地召唤师英雄熟练度
-    currentSummonerChampionMastery = await getRiotData(
-      `/lol-collections/v1/inventories/${puuid}/champion-mastery`
-    );
   } catch (error) {
     console.error("发生错误:", error);
   }
@@ -76,7 +71,7 @@ main();
 //node定义接口
 
 // 查询本地召唤师信息
-router.get("/api/getCurrentSummoner", async (req, res, next) => {
+router.get("/getCurrentSummoner", async (req, res, next) => {
   const currentSummonerInfo = await getRiotData(
     "/lol-summoner/v1/current-summoner"
   );
@@ -85,7 +80,7 @@ router.get("/api/getCurrentSummoner", async (req, res, next) => {
 });
 
 //根据summonerID查询战绩
-router.get("/api/getMatchHistoryBySummonerId", async (req, res, next) => {
+router.get("/getMatchHistoryBySummonerId", async (req, res, next) => {
   console.log(req.query);
   const summonerId = req.query.summonerId;
   const MatchHistory = await getRiotData(
@@ -96,7 +91,7 @@ router.get("/api/getMatchHistoryBySummonerId", async (req, res, next) => {
 });
 
 //查询本地召唤师排位分数
-router.get("/api/getCurrentSummonerRankInfo", async (req, res, next) => {
+router.get("/getCurrentSummonerRankInfo", async (req, res, next) => {
   const puuid = req.query.puuid;
   //查询本地召唤师排位分数
   const currentSummonerRankInfo = await getRiotData(
@@ -107,8 +102,17 @@ router.get("/api/getCurrentSummonerRankInfo", async (req, res, next) => {
 });
 
 //查询本地召唤师英雄熟练度
-router.get("/api/getCurrentSummonerChampionMastery", function (req, res, next) {
+router.get("/getCurrentSummonerChampionMastery", function (req, res, next) {
   res.send(currentSummonerChampionMastery);
+});
+
+//测试
+router.get("/getDataByAccountId", async (req, res, next) => {
+  const accountId = req.query.accountId;
+  const data = await getRiotData(
+    `/lol-match-history/v1/friend-matchlists/${accountId}`
+  );
+  res.send(data);
 });
 
 module.exports = router;
