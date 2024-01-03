@@ -3,6 +3,7 @@ const router = express.Router();
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 const { exec } = require("child_process");
 const https = require("https");
+const { default: axios } = require("axios");
 
 let allData = null;
 let currentSummonerChampionMastery = null; //本地召唤师英雄熟练度
@@ -23,7 +24,9 @@ const findLeagueClientCommandLine = async () => {
   });
 };
 
-const getRiotData = async (url, method = "GET") => {
+const getRiotData = async (url, method = "GET", params) => {
+  if (allData == null) return false;
+
   //通过正则匹配拿到token和port
   const token = allData.match(/remoting-auth-token=(.*?)["'\s]/)[1];
   const port = allData.match(/--app-port=(.*?)["'\s]/)[1];
@@ -40,6 +43,7 @@ const getRiotData = async (url, method = "GET") => {
     method: method,
     headers: headers,
   };
+  // console.log(options);
   return new Promise((resolve, reject) => {
     const req = https.request(options, (res) => {
       let data = "";
@@ -55,6 +59,22 @@ const getRiotData = async (url, method = "GET") => {
     });
     req.end();
   });
+
+  // return new Promise((resolve, reject) => {
+  //   const instance = axios.create({
+  //     url: `http://127.0.0.1:${port}${url}`,
+  //     method: method,
+  //     headers: headers,
+  //     params: params,
+  //   });
+  //   instance()
+  //     .then((res) => {
+  //       resolve(res);
+  //     })
+  //     .catch((error) => {
+  //       reject(error);
+  //     });
+  // });
 };
 
 const main = async () => {
@@ -107,11 +127,18 @@ router.get("/getCurrentSummonerChampionMastery", function (req, res, next) {
 });
 
 //测试
-router.get("/getDataByAccountId", async (req, res, next) => {
-  const accountId = req.query.accountId;
+router.get("/getDataByPuuid", async (req, res, next) => {
+  const puuid = req.query.puuid;
   const data = await getRiotData(
-    `/lol-match-history/v1/friend-matchlists/${accountId}`
+    `/lol-match-history/v1/products/lol/${puuid}/matches`
   );
+  res.send(data);
+});
+
+//根据name查询召唤师信息
+router.get("/getSummonerInfoByName", async (req, res, next) => {
+  const name = req.body.name;
+  const data = await getRiotData("/lol-summoner/v1/summoners", "航航航牛皮");
   res.send(data);
 });
 
