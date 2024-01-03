@@ -113,7 +113,6 @@ router.get("/getMatchHistoryBySummonerId", async (req, res, next) => {
 //查询本地召唤师排位分数
 router.get("/getCurrentSummonerRankInfo", async (req, res, next) => {
   const puuid = req.query.puuid;
-  //查询本地召唤师排位分数
   const currentSummonerRankInfo = await getRiotData(
     `/lol-ranked/v1/current-ranked-stats${puuid}`
   );
