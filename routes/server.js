@@ -93,6 +93,7 @@ const main = async () => {
 main();
 
 //node定义接口
+
 // 查询本地召唤师信息
 router.get("/getCurrentSummoner", async (req, res, next) => {
   const data = await getRiotData("/lol-summoner/v1/current-summoner");
@@ -103,6 +104,12 @@ router.get("/getCurrentSummoner", async (req, res, next) => {
   // });
 
   // const data = await getRiotData1().get("/lol-summoner/v1/current-summoner");
+  res.send(data);
+});
+
+//查询本地召唤师rank信息
+router.get("/getCurrentSummonerRankInfo", async (req, res, next) => {
+  const data = await getRiotData("/lol-ranked/v1/current-ranked-stats");
   res.send(data);
 });
 
