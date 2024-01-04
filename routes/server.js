@@ -6,7 +6,7 @@ const https = require("https");
 const { default: axios } = require("axios");
 
 let allData = null;
-let currentSummonerChampionMastery = null; //本地召唤师英雄熟练度
+
 //拿去当前电脑客户端登录的lol用户基础信息
 const findLeagueClientCommandLine = async () => {
   return new Promise((resolve, reject) => {
@@ -61,7 +61,7 @@ const getRiotData = async (url, method = "GET", params) => {
   });
 };
 
-const getRiotData1 = async () => {
+const getRiotData1 = () => {
   if (allData == null) return false;
 
   //通过正则匹配拿到token和port
@@ -93,43 +93,17 @@ const main = async () => {
 main();
 
 //node定义接口
-
 // 查询本地召唤师信息
 router.get("/getCurrentSummoner", async (req, res, next) => {
-  // const currentSummonerInfo = await getRiotData(
-  //   "/lol-summoner/v1/current-summoner"
-  // );
-  const currentSummonerInfo = await getRiotData1({
-    url: "/lol-summoner/v1/current-summoner",
-    method: "get",
-  });
-  res.send(currentSummonerInfo);
-});
+  const data = await getRiotData("/lol-summoner/v1/current-summoner");
 
-//根据summonerID查询战绩
-router.get("/getMatchHistoryBySummonerId", async (req, res, next) => {
-  console.log(req.query);
-  const summonerId = req.query.summonerId;
-  const MatchHistory = await getRiotData(
-    `/lol-match-history/v1/products/lol/${summonerId}/matches`
-  );
+  // const data = await getRiotData1({
+  //   url: "/lol-summoner/v1/current-summoner",
+  //   method: "get",
+  // });
 
-  res.send(MatchHistory);
-});
-
-//查询本地召唤师排位分数
-router.get("/getCurrentSummonerRankInfo", async (req, res, next) => {
-  const puuid = req.query.puuid;
-  const currentSummonerRankInfo = await getRiotData(
-    `/lol-ranked/v1/current-ranked-stats${puuid}`
-  );
-
-  res.send(currentSummonerRankInfo);
-});
-
-//查询本地召唤师英雄熟练度
-router.get("/getCurrentSummonerChampionMastery", function (req, res, next) {
-  res.send(currentSummonerChampionMastery);
+  // const data = await getRiotData1().get("/lol-summoner/v1/current-summoner");
+  res.send(data);
 });
 
 //根据ppuid查询近期战绩（20局）
@@ -144,8 +118,9 @@ router.get("/getDataByPuuid", async (req, res, next) => {
 //根据name查询召唤师信息
 router.get("/getSummonerInfoByName", async (req, res, next) => {
   const name = req.query.name;
-  const a = JSON.stringify({ name: name });
-  const data = await getRiotData("/lol-summoner/v1/summoners", "GET", a);
+  const data = await getRiotData(
+    encodeURI(`/lol-summoner/v1/summoners?name=${name}`)
+  );
   res.send(data);
 });
 
