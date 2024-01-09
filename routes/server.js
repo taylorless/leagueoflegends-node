@@ -118,9 +118,17 @@ router.get("/getCurrentSummonerRankInfo", async (req, res, next) => {
   res.send(data);
 });
 
-//根据ppuid查询近期战绩（20局）
-router.get("/getDataByPuuid", async (req, res, next) => {
+//根据puuid查询召唤师rank信息
+router.get("/getSummonRankInfoByPuuid", async (req, res, next) => {
   const puuid = req.query.puuid;
+  const data = await getRiotData(`/lol-ranked/v1/ranked-stats/${puuid}`);
+  res.send(data);
+});
+
+//根据ppuid查询近期战绩（20局）
+router.get("/getMatchListByPuuid", async (req, res, next) => {
+  const puuid = req.query.puuid;
+  // console.log(puuid);
   const data = await getRiotData(
     `/lol-match-history/v1/products/lol/${puuid}/matches`
   );
@@ -133,6 +141,14 @@ router.get("/getSummonerInfoByName", async (req, res, next) => {
   const data = await getRiotData(
     encodeURI(`/lol-summoner/v1/summoners?name=${name}`)
   );
+  res.send(data);
+});
+
+//根据gameId查询比赛详细数据
+router.get("/getMatchInfoByGameId", async (req, res, next) => {
+  const gameId = req.query.gameId;
+  // console.log(gameId);
+  const data = await getRiotData(`/lol-match-history/v1/games/${gameId}`);
   res.send(data);
 });
 
