@@ -152,4 +152,10 @@ router.get("/getMatchInfoByGameId", async (req, res, next) => {
   res.send(data);
 });
 
+//查询客户端当前对局信息
+router.get("/getCurrentGame", async (req, res, next) => {
+  const data = await getRiotData("/lol-gameflow/v1/session");
+  res.send(data);
+});
+
 module.exports = router;
