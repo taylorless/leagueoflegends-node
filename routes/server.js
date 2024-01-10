@@ -118,6 +118,15 @@ router.get("/getCurrentSummonerRankInfo", async (req, res, next) => {
   res.send(data);
 });
 
+//根据puuid查询召唤师英雄熟练度
+router.get("/getSummonerChampMastery", async (req, res, next) => {
+  const puuid = req.query.puuid;
+  const data = await getRiotData(
+    `/lol-collections/v1/inventories/${puuid}/champion-mastery`
+  );
+  res.send(data);
+});
+
 //根据puuid查询召唤师rank信息
 router.get("/getSummonRankInfoByPuuid", async (req, res, next) => {
   const puuid = req.query.puuid;
